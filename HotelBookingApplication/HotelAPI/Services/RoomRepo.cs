@@ -30,7 +30,16 @@ namespace HotelAPI.Services
 
         public Room Delete(IdDTO item)
         {
-            throw new NotImplementedException();
+            var rooms = _context.Rooms.ToList();
+            var myRoom = rooms.SingleOrDefault(r=>r.R_id==item.ID);
+            if (myRoom != null)
+            {
+                _context.Rooms.Remove(myRoom);
+                _context.SaveChanges();
+                return myRoom;
+            }
+            else
+                return null;
         }
 
         public ICollection<Room> GetAll()
@@ -43,12 +52,24 @@ namespace HotelAPI.Services
 
         public Room GetValue(IdDTO item)
         {
-            throw new NotImplementedException();
+            var rooms=_context.Rooms.ToList();
+            var room = rooms.SingleOrDefault(r=>r.R_id==item.ID);
+            if(room!=null)
+                return room;
+            return null;
         }
 
         public Room Update(Room item)
         {
-            throw new NotImplementedException();
+            var rooms = _context.Rooms.ToList();
+            var room = rooms.SingleOrDefault(r => r.R_id == item.R_id);
+            if (room != null)
+            {
+                _context.Rooms.Update(item);
+                _context.SaveChanges();
+                return room;
+            }
+            return null;
         }
     }
 }
