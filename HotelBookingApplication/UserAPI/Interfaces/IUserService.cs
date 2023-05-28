@@ -7,6 +7,7 @@ namespace UserAPI.Interfaces
     {
         UserDTO Register(UserRegisterDTO userRegisterDTO);
         UserDTO LogIN(UserDTO userDTO);
-        User Update(User user);
+        UserDTO Update(UserRegisterDTO user);
+        bool Update_Password(UserDTO userRegisterDTO);
     }
 }

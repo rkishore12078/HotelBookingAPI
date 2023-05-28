@@ -1,6 +1,6 @@
-﻿namespace HotelReservation
+﻿namespace HotelReservation.Exceptions
 {
-    public class InvalidReservationID:Exception
+    public class InvalidReservationID : Exception
     {
         string message;
         public InvalidReservationID()

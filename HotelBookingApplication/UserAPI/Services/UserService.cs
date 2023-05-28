@@ -55,12 +55,55 @@ namespace UserAPI.Services
             return user;
         }
 
-        public User Update(User user)
+        public UserDTO Update(UserRegisterDTO user)
         {
-            var myUser = _userRepo.Update(user);
+            var users=_userRepo.GetAll();
+            User myUser=users.SingleOrDefault(u=>u.Username==user.Username);
             if (myUser != null)
-                return myUser;
+            {
+                myUser.Name = user.Name;
+                myUser.PhoneNumber = user.PhoneNumber;
+                myUser.Age = user.Age;
+                var hmac = new HMACSHA512();
+                myUser.Password= hmac.ComputeHash(Encoding.UTF8.GetBytes(user.UserPassword));
+                myUser.HashKey = hmac.Key;
+                myUser.Role=user.Role;
+                UserDTO userDTO = new UserDTO();
+                userDTO.Username = myUser.Username;
+                userDTO.Role = myUser.Role;
+                userDTO.Token= _tokenService.GenerateToken(userDTO);
+                var newUser=_userRepo.Update(myUser);
+                if (newUser != null)
+                {
+                    return userDTO;
+                }
+                return null;
+            }
             return null;
+        }
+
+        public bool Update_Password(UserDTO userDTO)
+        {
+            User user = new User();
+            var users = _userRepo.GetAll();
+            var myUser = users.SingleOrDefault(u=>u.Username==userDTO.Username);
+            if (myUser != null)
+            {
+                user.Username=userDTO.Username;
+                var hmac = new HMACSHA512();
+                user.Password= hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password));
+                user.HashKey = hmac.Key;
+                user.Name = myUser.Name;
+                user.Role = myUser.Role;
+                user.Age = myUser.Age;
+                user.PhoneNumber = myUser.PhoneNumber;
+                var newUser=_userRepo.Update(user);
+                if (newUser != null)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

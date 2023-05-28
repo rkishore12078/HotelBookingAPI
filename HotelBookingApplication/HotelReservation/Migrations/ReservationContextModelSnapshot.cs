@@ -42,8 +42,9 @@ namespace HotelReservation.Migrations
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
 
-                    b.Property<long>("U_id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("R_id");
 

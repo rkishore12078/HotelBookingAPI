@@ -1,4 +1,5 @@
-﻿using HotelReservation.Interfaces;
+﻿using HotelReservation.Exceptions;
+using HotelReservation.Interfaces;
 using HotelReservation.Models;
 using HotelReservation.Models.DTO;
 
@@ -13,7 +14,7 @@ namespace HotelReservation.Services
         {
             _reservationRepo = productRepo;
         }
-        public Reservation Add(Reservation reservation)
+        public Reservation? Add(Reservation reservation)
         {
             var reservations= _reservationRepo.GetAll();//Take all objects in the database
             var myReservations = reservations.Where(R=>R.H_id==reservation.H_id && R.RoomNumber==reservation.RoomNumber).ToList();//fetch objects if hotel id and room number is matched
@@ -31,7 +32,7 @@ namespace HotelReservation.Services
             return null;
         }
 
-        public Reservation Delete(IdDTO idDTO)
+        public Reservation? Delete(IdDTO idDTO)
         {
             var reservations= _reservationRepo.GetAll();//Take all objects in the database
             var myReservation = reservations.SingleOrDefault(R=>R.R_id==idDTO.ID);//Check if the given reservation id is present in the database
@@ -44,7 +45,7 @@ namespace HotelReservation.Services
             return null;
         }
 
-        public Reservation GetReservation(IdDTO idDTO)
+        public Reservation? GetReservation(IdDTO idDTO)
         {
             var reservations = _reservationRepo.GetAll();//Take all objects in the database
             var myReservation = reservations.SingleOrDefault(R => R.R_id == idDTO.ID);//Check if the given reservation id is present in the database
@@ -57,11 +58,18 @@ namespace HotelReservation.Services
             return null;
         }
 
-        public Reservation Update(Reservation reservation)
+        public Reservation? Update(Reservation reservation)
         {
             var reservations = _reservationRepo.GetAll();//Take all objects in the database
-            var myReservation = reservations.SingleOrDefault(R => R.R_id == reservation.R_id);//Check if the given reservation id is present in the database
-            if (myReservation != null)
+            var oldReservation = reservations.SingleOrDefault(R => R.R_id == reservation.R_id);//Check if the given reservation id is present in the database
+            var checkDateIsOccupied = reservations.SingleOrDefault(R=>R.R_id==reservation.R_id && //Check if the new date is already booked or not
+                                                                   R.H_id==reservation.H_id &&
+                                                                   R.RoomNumber==reservation.RoomNumber &&
+                                                                   R.CheckInDate <= reservation.CheckInDate &&
+                                                                   R.CheckOutDate>=reservation.CheckInDate);
+            if (checkDateIsOccupied != null)
+                throw new InvalidDateException();
+            if (oldReservation != null)
             {
                 var newReservation = _reservationRepo.Update(reservation);
                 if (newReservation != null)
@@ -70,7 +78,7 @@ namespace HotelReservation.Services
             return null;
         }
 
-        public List<Reservation> GetAll()
+        public List<Reservation>? GetAll()
         {
             var reservartions= _reservationRepo.GetAll();//Take all objects in the database
             if (reservartions != null)

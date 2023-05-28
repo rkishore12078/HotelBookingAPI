@@ -15,7 +15,7 @@ namespace HotelReservation.Migrations
                 {
                     R_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    U_id = table.Column<long>(type: "bigint", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RoomNumber = table.Column<int>(type: "int", nullable: false),
                     H_id = table.Column<int>(type: "int", nullable: false),
                     CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: false),

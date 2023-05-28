@@ -1,4 +1,5 @@
-﻿using HotelAPI.Interfaces;
+﻿using HotelAPI.Exceptions;
+using HotelAPI.Interfaces;
 using HotelAPI.Models;
 using HotelAPI.Models.DTO;
 
@@ -17,16 +18,21 @@ namespace HotelAPI.Services
 
         public Hotel AddHotel(Hotel hotel)
         {
-            var myHotel = _hotelRepo.Add(hotel);
-            if (myHotel != null)
-                return myHotel;
+            var hotels = _hotelRepo.GetAll().ToList();
+            var newHotel = hotels.SingleOrDefault(h=>h.H_id==hotel.H_id);
+            if (newHotel == null)
+            {
+                var myHotel = _hotelRepo.Add(hotel);
+                if (myHotel != null)
+                    return myHotel;
+            }
             return null;
         }
 
         public List<Hotel> GetAllHotels()
         {
             var hotels = _hotelRepo.GetAll().ToList();
-            if (hotels.Count > 0)
+            if (hotels!=null)
                 return hotels;
             return null;
         }
@@ -62,14 +68,20 @@ namespace HotelAPI.Services
         public Room AddRoom(Room room)
         {
             var hotels = _hotelRepo.GetAll();
-            if (hotels==null)
-                return null;
-            var hotel = hotels.FirstOrDefault(h => h.H_id == room.H_id);
-            if (hotel != null)
+            if (hotels != null)
             {
-                var myRoom = _roomRepo.Add(room);
-                if (myRoom != null)
-                    return myRoom;
+                var hotel = hotels.FirstOrDefault(h => h.H_id == room.H_id);
+                if (hotel == null)
+                    throw new HotelDoesn_tExist();
+                var rooms = _roomRepo.GetAll();
+                var newRoom = rooms.SingleOrDefault(r => r.R_id == room.R_id);
+                if (newRoom == null)
+                {
+                    var myRoom = _roomRepo.Add(room);
+                    if (myRoom != null)
+                       return myRoom;
+                }
+                return null;
             }
             return null;
         }
@@ -153,11 +165,16 @@ namespace HotelAPI.Services
         //Filter the Rooms by Price Range
         public List<Room> Room_By_Price(PriceDTO priceDTO)
         {
-            var rooms= _roomRepo.GetAll().ToList();
-            var myRooms = rooms.Where(r=>r.H_id==priceDTO.H_Id && r.Price>=priceDTO.MinValue && r.Price<=priceDTO.MazValue ).ToList();
-            if (myRooms.Count > 0)
-                return myRooms;
+            var rooms = _roomRepo.GetAll().ToList();
+            if (rooms.FirstOrDefault(r => r.H_id == priceDTO.H_Id) == null)
+                return null;
+            if(priceDTO.MinValue>=priceDTO.MazValue)
+                throw new InvalidPriceRange();
+            var myRooms = rooms.Where(r => r.H_id == priceDTO.H_Id && r.Price >= priceDTO.MinValue && r.Price <= priceDTO.MazValue);
+            if (myRooms != null)
+                return myRooms.ToList();
             return null;
+                
         }
 
         //Filter the Rooms by Capacity

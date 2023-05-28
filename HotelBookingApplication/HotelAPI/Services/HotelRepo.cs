@@ -1,6 +1,8 @@
-﻿using HotelAPI.Interfaces;
+﻿using HotelAPI.Exceptions;
+using HotelAPI.Interfaces;
 using HotelAPI.Models;
 using HotelAPI.Models.DTO;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 
@@ -22,11 +24,10 @@ namespace HotelAPI.Services
                 _context.SaveChanges();
                 return item;
             }
-            catch (Exception ex)
+            catch (SqlException se)
             {
-                Debug.WriteLine(ex.Message);
+                throw new InvalidSqlException(se.Message);
             }
-            return null;
         }
 
         public Hotel Delete(IdDTO item)
@@ -51,42 +52,62 @@ namespace HotelAPI.Services
                 else
                     return null;
             }
-            catch (Exception e)
-            { 
-                Debug.WriteLine(e.Message);
+            catch (SqlException ex)
+            {
+                throw new InvalidSqlException(ex.Message);
             }
-            return null;
         }
 
         public ICollection<Hotel> GetAll()
         {
-            var hotels= _context.Hotels.ToList();
-            if(hotels.Count>0)
-                return hotels;
+            try
+            {
+                var hotels = _context.Hotels.ToList();
+                if (hotels!=null)
+                    return hotels;
+            }
+            catch (SqlException ex)
+            {
+                throw new InvalidSqlException(ex.Message);
+            }
             return null;
         }
 
         public Hotel GetValue(IdDTO item)
         {
-            var hotels=_context.Hotels.ToList();
-            var hotel = hotels.SingleOrDefault(h=>h.H_id==item.ID);
-            if(hotel!=null)
-                return hotel;
+            try
+            {
+                var hotels = _context.Hotels.ToList();
+                var hotel = hotels.SingleOrDefault(h => h.H_id == item.ID);
+                if (hotel != null)
+                    return hotel;
+            }
+            catch (SqlException ex)
+            {
+                throw new InvalidSqlException(ex.Message);
+            }
             return null;
         }
 
         public Hotel Update(Hotel item)
         {
-            var hotels = _context.Hotels.ToList();
-            var hotel = hotels.SingleOrDefault(h => h.H_id == item.H_id);
-            if (hotel != null)
+            try
             {
-                hotel.City=item.City;
-                hotel.Country=item.Country;
-                hotel.Amenities=item.Amenities;
-                _context.Hotels.Update(hotel);
-                _context.SaveChanges();
-                return hotel;
+                var hotels = _context.Hotels.ToList();
+                var hotel = hotels.SingleOrDefault(h => h.H_id == item.H_id);
+                if (hotel != null)
+                {
+                    hotel.City = item.City!=null?item.City:hotel.City;
+                    hotel.Country = item.Country!=null?item.Country:hotel.Country;
+                    hotel.Amenities = item.Amenities != null ? item.Amenities : hotel.Amenities;
+                    _context.Hotels.Update(hotel);
+                    _context.SaveChanges();
+                    return hotel;
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new InvalidSqlException(ex.Message);
             }
             return null;
         }

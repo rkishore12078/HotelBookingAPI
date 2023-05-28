@@ -1,4 +1,5 @@
-﻿using HotelReservation.Interfaces;
+﻿using HotelReservation.Exceptions;
+using HotelReservation.Interfaces;
 using HotelReservation.Models;
 using HotelReservation.Models.DTO;
 using Microsoft.Data.SqlClient;
@@ -26,9 +27,8 @@ namespace HotelReservation.Services
             }
             catch (SqlException se)//catch the unexpected sql exception
             {
-                Debug.WriteLine(se.Message);
+                throw new InvalidSqlException(se.Message);
             }
-            return null;
         }
 
         public Reservation Delete(IdDTO item)
@@ -46,7 +46,7 @@ namespace HotelReservation.Services
             }
             catch (SqlException se)//catch the unexpected sql exception
             {
-                Debug.WriteLine(se.Message);
+                throw new InvalidSqlException(se.Message);
             }
             return null;
         }
@@ -59,9 +59,8 @@ namespace HotelReservation.Services
             }
             catch (SqlException se)//catch the unexpected sql exception
             {
-                Debug.WriteLine(se.Message);
+                throw new InvalidSqlException(se.Message);
             }
-            return null;
         }
 
         public Reservation GetValue(IdDTO item)
@@ -75,7 +74,7 @@ namespace HotelReservation.Services
             }
             catch (SqlException se)//catch the unexpected sql exception
             {
-                Debug.WriteLine(se.Message);
+                throw new InvalidSqlException(se.Message);
             }
             return null;
         }
@@ -89,7 +88,7 @@ namespace HotelReservation.Services
                 if (reservation != null)
                 {
                     reservation.H_id = item.H_id != 0 ? item.H_id : reservation.H_id;//If the new object's hotel id is present then it will be updated else old hotel id is assigned
-                    reservation.U_id = item.U_id != 0 ? item.U_id : reservation.U_id;//If the new object's User id is present then it will be updated else old User id is assigned
+                    reservation.UserName = item.UserName != null ? item.UserName : reservation.UserName;//If the new object's User id is present then it will be updated else old User id is assigned
                     reservation.RoomNumber = item.RoomNumber != 0 ? item.RoomNumber : reservation.RoomNumber;//If the new object's RoomNumber is present then it will be updated else old RoomNumber is assigned
                     reservation.CheckInDate = DateTime.Compare(item.CheckInDate,DateTime.Now)!=0 ? item.CheckInDate.Date : reservation.CheckInDate.Date;//If the new object's CheckIn date is present then it will be updated else old checkin date is assigned
                     reservation.CheckOutDate = DateTime.Compare(item.CheckOutDate,DateTime.Now)!=0 ? item.CheckOutDate.Date : reservation.CheckOutDate.Date;//If the new object's CheckOut date is present then it will be updated else old checkout date is assigned
@@ -100,7 +99,7 @@ namespace HotelReservation.Services
             }
             catch (SqlException se)//catch the unexpected sql exception
             {
-                Debug.WriteLine(se.Message);
+                throw new InvalidSqlException(se.Message);
             }
             return null;
         }

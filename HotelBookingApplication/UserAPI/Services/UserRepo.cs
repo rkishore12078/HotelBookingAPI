@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
+using UserAPI.Exceptions;
 using UserAPI.Interfaces;
 using UserAPI.Models;
 using UserAPI.Models.DTO;
@@ -15,69 +16,83 @@ namespace UserAPI.Services
         {
             _context = context;
         }
-        public User Add(User user)
+        public User? Add(User user)
         {
             try
             {
-                _context.Users.Add(user);
-                _context.SaveChanges();
-                return user;
+                var users= _context.Users;
+                var myUser = users.SingleOrDefault(u=>u.Username==user.Username);
+                if (myUser == null)
+                {
+                    _context.Users.Add(user);
+                    _context.SaveChanges();
+                    return user;
+                }
+                return null;
             }
-            catch(SqlException se) { Debug.WriteLine(se.Message); }
-            return null;
+            catch(SqlException se) { throw new InvalidSqlException(se.Message); }
         }
 
-        public User Delete(UserDTO userDTO)
+        public User? Delete(UserDTO userDTO)
         {
-            throw new NotImplementedException();
-        }
-
-        public User Get(UserDTO userDTO)
-        {
-            var users = GetAll();
-            var user = users.FirstOrDefault(u=>u.Username== userDTO.Username);
-            if (user != null)
+            try
             {
-                return user;
+                var users = _context.Users;
+                var myUser = users.SingleOrDefault(u => u.Username == userDTO.Username);
+                if (myUser != null)
+                {
+                    _context.Users.Remove(myUser);
+                    _context.SaveChanges();
+                    return myUser;
+                }
+                return null;
             }
-            return null;
+            catch (SqlException se) { throw new InvalidSqlException(se.Message); }
         }
 
-        public List<User> GetAll()
+        public User? Get(UserDTO userDTO)
         {
-            var users= _context.Users.ToList();
-            if(users.Count>0)
-                return users;
-            return null;
+            try
+            {
+                var users = GetAll();
+                var user = users.FirstOrDefault(u => u.Username == userDTO.Username);
+                if (user != null)
+                {
+                    return user;
+                }
+                return null;
+            }
+            catch (SqlException se) { throw new InvalidSqlException(se.Message); }
+        }
+
+        public List<User>? GetAll()
+        {
+            try
+            {
+                var users = _context.Users.ToList();
+                if (users != null)
+                    return users;
+                return null;
+            }
+            catch (SqlException se) { throw new InvalidSqlException(se.Message); }
         }
 
         public User Update(User user)
         {
-            var users = GetAll();
-            var Newuser = users.FirstOrDefault(u => u.Username == user.Username);
-            if (Newuser != null)
+            try
             {
-                Newuser.Name = user.Name;
-                Newuser.Password = user.Password;
-                Newuser.PhoneNumber = user.PhoneNumber;
-                Newuser.Age = user.Age;
-                _context.Users.Update(Newuser);
-                _context.SaveChanges();
-                return Newuser;
+                var users = GetAll();
+                var Newuser = users.FirstOrDefault(u => u.Username == user.Username);
+                if (Newuser != null)
+                {
+                    _context.Users.Update(Newuser);
+                    _context.SaveChanges();
+                    return Newuser;
+                }
+                else
+                    return null;
             }
-            else
-                return null;
+            catch (SqlException se) { throw new InvalidSqlException(se.Message); }
         }
-
-        //public UserDTO UpdatePassword(UserDTO userDTO)
-        //{
-        //    var users = _context.Users.ToList();
-        //    var Newuser = users.FirstOrDefault(u => u.Username == userDTO.Username);
-        //    var hmac = new HMACSHA512();
-        //    Newuser.Password = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password));
-        //    Newuser.HashKey = hmac.Key;
-        //    _context.SaveChanges();
-        //    return null;
-        //}
     }
 }
