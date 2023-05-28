@@ -22,7 +22,7 @@ namespace UserAPI.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId,userDTO.Username),
-                new Claim(JwtRegisteredClaimNames.NameId,userDTO.Role)
+                new Claim(ClaimTypes.Role,userDTO.Role)
             };
             //Signature algorithm
             var cred = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);

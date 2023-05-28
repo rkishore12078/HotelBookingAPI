@@ -20,7 +20,7 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(typeof(Hotel), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles ="staff")]
         public ActionResult<Hotel> Add_Hotel(Hotel hotel)
         {
             var myHotel = _hotelService.AddHotel(hotel);
@@ -32,7 +32,7 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(typeof(Room), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles ="staff")]
         public ActionResult<Room> Add_Room(Room room)
         {
             var myroom = _hotelService.AddRoom(room);
@@ -44,7 +44,7 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(typeof(Hotel), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpDelete]
-        [Authorize]
+        [Authorize(Roles = "staff")]
 
         public ActionResult<Room> Delete_Hotel([FromQuery] IdDTO idDTO)
         {
@@ -57,9 +57,9 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(typeof(Room), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpDelete]
-        [Authorize]
+        [Authorize(Roles = "staff")]
 
-        public ActionResult<Room> Delete_Room([FromQuery] IdDTO idDTO)
+        public ActionResult<Room> Delete_Room(IdDTO idDTO)
         {
             var myroom = _hotelService.DeleteRoom(idDTO);
             if (myroom != null)
@@ -70,7 +70,7 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(typeof(Hotel), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPut]
-        [Authorize]
+        [Authorize(Roles = "staff")]
 
         public ActionResult<Hotel> Update_Hotel(Hotel hotel)
         {
@@ -110,8 +110,6 @@ namespace HotelAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpGet]
         [Authorize]
-
-
         public ActionResult<List<Room>> Rooms_By_Hotel([FromQuery] IdDTO idDTO)
         {
             var rooms = _hotelService.Room_By_Hotel(idDTO);

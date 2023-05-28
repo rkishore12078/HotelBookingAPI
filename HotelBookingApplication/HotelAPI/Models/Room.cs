@@ -10,6 +10,7 @@ namespace HotelAPI.Models
         public int H_id { get; set; }
         [ForeignKey("H_id")]
         public Hotel? Hotels { get; set; }
+        public int RoomNumber { get; set; }
         public double Price { get; set; }
         [Required]
         public int Capacity { get; set; }

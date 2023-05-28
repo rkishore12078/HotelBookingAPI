@@ -61,7 +61,9 @@ namespace HotelAPI.Services
         //Adding a Room
         public Room AddRoom(Room room)
         {
-            var hotels = _hotelRepo.GetAll().ToList();
+            var hotels = _hotelRepo.GetAll();
+            if (hotels==null)
+                return null;
             var hotel = hotels.FirstOrDefault(h => h.H_id == room.H_id);
             if (hotel != null)
             {

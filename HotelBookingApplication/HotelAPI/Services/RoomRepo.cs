@@ -31,7 +31,7 @@ namespace HotelAPI.Services
         public Room Delete(IdDTO item)
         {
             var rooms = _context.Rooms.ToList();
-            var myRoom = rooms.SingleOrDefault(r=>r.R_id==item.ID);
+            var myRoom = rooms.SingleOrDefault(r=>r.RoomNumber==item.ID);
             if (myRoom != null)
             {
                 _context.Rooms.Remove(myRoom);
@@ -53,7 +53,7 @@ namespace HotelAPI.Services
         public Room GetValue(IdDTO item)
         {
             var rooms=_context.Rooms.ToList();
-            var room = rooms.SingleOrDefault(r=>r.R_id==item.ID);
+            var room = rooms.SingleOrDefault(r=>r.RoomNumber==item.ID);
             if(room!=null)
                 return room;
             return null;
@@ -62,7 +62,7 @@ namespace HotelAPI.Services
         public Room Update(Room item)
         {
             var rooms = _context.Rooms.ToList();
-            var room = rooms.SingleOrDefault(r => r.R_id == item.R_id);
+            var room = rooms.SingleOrDefault(r => r.RoomNumber == item.R_id);
             if (room != null)
             {
                 _context.Rooms.Update(item);
