@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelReservation.Migrations
 {
     [DbContext(typeof(ReservationContext))]
-    [Migration("20230527030510_init")]
+    [Migration("20230528071307_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,7 @@ namespace HotelReservation.Migrations
                     b.Property<DateTime>("CheckInDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("CheckOutDate")
+                    b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("H_id")
@@ -44,8 +44,8 @@ namespace HotelReservation.Migrations
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("U_id")
-                        .HasColumnType("int");
+                    b.Property<long>("U_id")
+                        .HasColumnType("bigint");
 
                     b.HasKey("R_id");
 

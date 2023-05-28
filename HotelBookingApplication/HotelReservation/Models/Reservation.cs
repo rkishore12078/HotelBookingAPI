@@ -7,7 +7,7 @@ namespace HotelReservation.Models
         [Key]
         public int R_id { get; set; }
         [Required]
-        public int U_id { get; set; }
+        public uint U_id { get; set; }
         [Required]
         public int RoomNumber { get; set; }
         [Required]

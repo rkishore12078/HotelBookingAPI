@@ -201,5 +201,17 @@ namespace HotelAPI.Controllers
                 return Ok(roomsCount);
             return NotFound(new Error(4, "No Rooms available"));
         }
+
+        [ProducesResponseType(typeof(List<HotelAndRooms>), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
+        [HttpGet]
+        //[Authorize]
+        public ActionResult<List<HotelAndRooms>> Total_Hotels_Rooms()
+        {
+            var hotelAndRooms=_hotelService.Total_Hotels_Rooms();
+            if(hotelAndRooms!=null)
+                return Ok(hotelAndRooms);
+            return BadRequest(new Error(5,"Unable to fetch details"));
+        }
     }
 }

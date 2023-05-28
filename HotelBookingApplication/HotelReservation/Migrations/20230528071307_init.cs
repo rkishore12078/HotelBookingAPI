@@ -15,11 +15,11 @@ namespace HotelReservation.Migrations
                 {
                     R_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    U_id = table.Column<int>(type: "int", nullable: false),
+                    U_id = table.Column<long>(type: "bigint", nullable: false),
                     RoomNumber = table.Column<int>(type: "int", nullable: false),
                     H_id = table.Column<int>(type: "int", nullable: false),
                     CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

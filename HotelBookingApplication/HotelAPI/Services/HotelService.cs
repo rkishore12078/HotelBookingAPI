@@ -187,5 +187,26 @@ namespace HotelAPI.Services
             int roomsCount = hotels.Where(h => h.H_id==idDTO.ID).Count();
             return roomsCount;
         }
+
+
+        public List<HotelAndRooms> Total_Hotels_Rooms()
+        {
+            List<HotelAndRooms> hotelAndRooms1 = new List<HotelAndRooms>();
+            var rooms=_roomRepo.GetAll().ToList();
+            if (rooms != null)
+            {
+                var myRooms = rooms.GroupBy(r=>r.H_id);
+                foreach (var room in myRooms)
+                {
+                    HotelAndRooms hotelAndRooms = new HotelAndRooms();
+                    hotelAndRooms.HotelId = room.Key;
+                    hotelAndRooms.RoomsCount = room.Count();
+                    hotelAndRooms1.Add(hotelAndRooms);
+                }
+                return hotelAndRooms1;
+            }
+            return null;
+        }
     }
+
 }
